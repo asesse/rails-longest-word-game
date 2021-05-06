@@ -1,6 +1,16 @@
 
-<p>******** Now your results ********</p>
-<p>Your word: <%=params[:word] %></p>
+<h1>******** Now your results ********</h1>
+<% if @included %>
+  <% if @english_word %>
+  <p>Congratulations!<%= @word %> is a valid English word!</p>
+  <% else %>
+  <p>Sorry, <%= @word %> is not a valid English word</p>
+  <% else %>
+  <p>Sorry but <%= @word %> can't be built out of <%= @letters.join(", ")%></p>
+
+<% end %>
+
+
 <p>Time Taken to answer:<%=  %></p>
 <p>Your score:<%=  %></p>
 <p>Message:<%= @message %></p>

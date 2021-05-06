@@ -1,33 +1,32 @@
-class GamesController < ApplicationController
-  def new
-    alphabet = ("a".."z").to_a
-    @grid = []
+require 'open-uri'
 
-    9.times { @grid << alphabet.sample }
-    # do
-    # sample = alphabet.sample
-    # if alphabet.sample.consonant?
-    # end
+class GamesController < ApplicationController
+  VOWELS = %w(A E I O U Y)
+  def home
+  end
+
+  def new
+    @letters = Array.new(4) { VOWELS.sample }
+    @letters += Array.new(5) { (('A'..'Z').to_a - VOWELS).sample }
+    @letters.shuffle!
   end
 
   def score
+    @letters = params[:letters]
+    @word = params[:word]
+    @included = included?(@word, @letters)
+    @english_word = english_word?(@word)
+  end
 
-    #check if each letter of the word is a letter of the grid
-    word = params[:word]
-    word.each_char {|x| @grid.include?(x)}
+  private
 
+  def included?(word, letters)
+    word.chars.all? { |letter| word.count(letter) <= letters.count(letter) }
+  end
 
-    #check if the word is a valid english word (API)
-
-    url = "https://wagon-dictionary.herokuapp.com/#{params[:word]}"
-
-
-
-# if word from grid && valid english word
-    if url == true &&
-      @message = "Well done!"
-    else
-      @message = "You suck!"
-    end
+  def english_word?(word)
+    url = URI.open("https://wagon-dictionary.herokuapp.com/#{word}")
+    json = JSON.parse(url.read)
+    json['found']
   end
 end
